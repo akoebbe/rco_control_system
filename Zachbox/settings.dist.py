@@ -78,6 +78,7 @@ class Settings:
     controller_mic_min_down = ("DOWN", "START")
     controller_mic_max_up = ("UP", "SELECT")
     controller_mic_max_down = ("DOWN", "SELECT")
+    controller_blink_auto_toggle = ("B", "SELECT")
     
 
 # ---------------------------------------
