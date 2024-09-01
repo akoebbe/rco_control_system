@@ -11,6 +11,8 @@ from cylon_state import CylonState
 from mic import PDM2040 as MicMonitor
 from connection_espnow import ConnectionEspnow
 from wii_controller import WiiController
+import time
+import random
 
 LOGGER.setLevel(logging.INFO)
 
@@ -52,6 +54,7 @@ async def button_watcher():
     wc.add_button_map(Settings.controller_mouthcolor_prev[0], lambda: state.mouth.prev_color(), modifier_button=Settings.controller_mouthcolor_prev[1])
     
     wc.add_button_map(Settings.controller_blink[0], state.eyes.build_blink_frames, modifier_button=Settings.controller_blink[1])
+    wc.add_button_map(Settings.controller_blink_auto_toggle[0], state.blink_auto_toggle, modifier_button=Settings.controller_blink_auto_toggle[1])
     wc.add_button_map(Settings.controller_ohnono[0], state.ohnonono, modifier_button=Settings.controller_ohnono[1])
     wc.add_button_map(Settings.controller_togglescreen[0], state.disp.toggle_display, Settings.controller_togglescreen[1])
 
@@ -79,7 +82,7 @@ async def animator():
         if state.eyes.has_animation:
             state.eyes.animate()
             send_update()
-        await asyncio.sleep(0.05)
+        await asyncio.sleep(0.02)
 
 async def heartbeat_listener():
     while True:
@@ -89,6 +92,15 @@ async def heartbeat_listener():
             state.set_heartbeat_from_message(heartbeat_msg)
             LOGGER.info("Battery: %sv, %s life, %sC, %s%%", state.battery, state.get_battery_remaining(), state.temp, state.get_signal_percent())
         await asyncio.sleep(.5)
+
+async def auto_blink():
+    next_blink_time = time.monotonic() + (random.random() * (Settings.eye_blink_max_secs - Settings.eye_blink_min_secs)) + Settings.eye_blink_min_secs
+    
+    while True:
+        if state.blink_auto and time.monotonic() > next_blink_time:
+            state.eyes.build_blink_frames()
+            next_blink_time = time.monotonic() + (random.random() * (Settings.eye_blink_max_secs - Settings.eye_blink_min_secs)) + Settings.eye_blink_min_secs
+        await asyncio.sleep(.3)
 
 def send_update():
     #LOGGER.debug("Sending %s %s", mic_value, position)
@@ -109,8 +121,9 @@ async def main():
     nc_task = asyncio.create_task(button_watcher())
     animate_task = asyncio.create_task(animator())
     heartbeat_task = asyncio.create_task(heartbeat_listener())
+    auto_blink_task = asyncio.create_task(auto_blink())
 
-    await asyncio.gather(mic_task, nc_task, animate_task, heartbeat_task) 
+    await asyncio.gather(mic_task, nc_task, animate_task, heartbeat_task, auto_blink_task) 
 
 asyncio.run(main())
 

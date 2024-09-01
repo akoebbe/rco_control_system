@@ -25,6 +25,14 @@ class Settings:
     ]
     
     mouth_style = mouth_styles.Kitt
+
+    
+    # ---------------------------------------
+    # Eye Blink Settings
+    # ---------------------------------------
+    eye_blink_auto = True # Default when turned on. True = eyes will randomly blink. 
+    eye_blink_min_secs = 3 # The shortest amount of time (in seconds) between blinks
+    eye_blink_max_secs = 10 # The longest amount of time (in seconds) between blinks
     
     # ---------------------------------------
     # Servo Settings

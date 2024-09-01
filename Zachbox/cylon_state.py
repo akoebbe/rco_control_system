@@ -26,6 +26,7 @@ class CylonState:
     servo_travel_secs = Settings.servo_travel_secs
     servo_steps = Settings.servo_steps
     servo_easing = Const.EASING_TO_INT_MAP[Settings.servo_easing]
+    _blink_auto = Settings.eye_blink_auto
 
     _mic_mouth_range = (Settings.mic_min, Settings.mic_max)
     _battery = MedianFilter(window_size=10)
@@ -40,7 +41,8 @@ class CylonState:
         self.disp.add_status_indicator(column=0, slot=0, key="zachbox_temp", label_text="Temp", value=microcontroller.cpu.temperature)
         self.disp.add_status_indicator(column=0, slot=1, key="mic_min", label_text="Mic Min", value=self._mic_mouth_range[0])
         self.disp.add_status_indicator(column=0, slot=2, key="mic_max", label_text="Mic Max", value=self.mic_mouth_range[1])
-        self.disp.add_meter(column=0, slot=3, key="mic", label_text="Mic", full_width=True, floor=Settings.mic_min, ceiling=Settings.mic_max)
+        self.disp.add_status_indicator(column=0, slot=3, key="blink_auto", label_text="Auto Blink", value=self.blink_auto)
+        self.disp.add_meter(column=0, slot=4, key="mic", label_text="Mic", full_width=True, floor=Settings.mic_min, ceiling=Settings.mic_max)
         self.disp.add_status_indicator(column=1, slot=0, key="batt", label_text="Battery", value=self.battery)
         self.disp.add_status_indicator(column=1, slot=1, key="temp", label_text="Temp", value=self.temp)
         self.disp.add_status_indicator(column=1, slot=2, key="rssi", label_text="Signal", value=self.rssi)
@@ -161,6 +163,18 @@ class CylonState:
         self.disp.update_value("mic_min", mouth_range[0])
         self.disp.update_value("mic_max", mouth_range[1])
         self._generate_mic_mouth_map()
+        
+    @property
+    def blink_auto(self):
+        return self._blink_auto
+    
+    @blink_auto.setter
+    def blink_auto(self, enabled):
+        self._blink_auto = enabled
+        self.disp.update_value("blink_auto", enabled)
+    
+    def blink_auto_toggle(self):
+        self.blink_auto = not self.blink_auto
 
     def _build_leds(self):
         leds = []
