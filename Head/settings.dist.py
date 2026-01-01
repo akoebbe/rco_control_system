@@ -5,8 +5,8 @@ class Settings:
     mouth_led_count = 8 # Number of LEDs in the mouth
     eye_led_count = 7 # Number of LEDs in each eye
     port = 5000 # This must match the value in Zach's box
-    led_pin = board.D37 # Pin number the LEDs are plugged into
-    servo_pin = board.D35 # Pin number the servo is plugged into
+    led_pin = board.D37 # Pin number the LEDs are plugged into (GPIO 37 = MISO)
+    servo_pin = board.D35 # Pin number the servo is plugged into (GPIO 35 = MOSI)
     ssid = ""
     ssid_password = ""
     ssid_channel = 1

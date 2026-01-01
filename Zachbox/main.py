@@ -36,6 +36,7 @@ async def mic_check():
     while True:
         state.set_mic_level(mic.get_value())
         if last_value is None or state.mic_level != last_value:
+            LOGGER.info("mic value: %s", state.mic_level)
             send_update()
             last_value = state.mic_level
         await asyncio.sleep(0)
