@@ -17,3 +17,5 @@ settings.dist.py
 test.py
 timeit.py
 wii_controller.py
+settings.py
+input_mapping.py

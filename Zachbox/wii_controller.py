@@ -4,6 +4,7 @@ from ulab import numpy as np
 from logger import LOGGER
 from settings import Settings
 from timeit import TimeIt
+from input_mapping import apply_deadzone, map_servo_value, slew_limit
 
 class WiiController:
     increment_size = 6
@@ -22,8 +23,6 @@ class WiiController:
         self.servo_max_step = Settings.controller_servo_max_step
         self._init_button_map()
         self.timeit = TimeIt()
-        # Precalculate the joystick to servo value mappings
-        self.joy_servo_map = {k: round(np.interp(k, self.joy_range, self.servo_range)[0] * self.increment_size) for k in range(0,256)}
     
     def __str__(self) -> str:
         return str(self.wc.buttons)
@@ -70,22 +69,13 @@ class WiiController:
         button_map.add_callback(callback=callback, modifier_name=modifier_button)
         
 
-    def _apply_deadzone(self, raw_value: int) -> int:
-        if abs(raw_value - self.deadzone_center) <= self.deadzone_size:
-            return self.deadzone_center
-        return raw_value
-
     def joystick_servo(self):
         left_x, left_y = self.wc.joystick_l
-        x = self._apply_deadzone(left_x)
-        raw = self.joy_servo_map[x]
-        delta = raw - self.servo_last
-        if delta > self.servo_max_step:
-            raw = self.servo_last + self.servo_max_step
-        elif delta < -self.servo_max_step:
-            raw = self.servo_last - self.servo_max_step
-        self.servo_last = raw
-        return raw
+        x = apply_deadzone(left_x, self.deadzone_center, self.deadzone_size)
+        raw = map_servo_value(x, self.joy_range, self.servo_range, self.increment_size)
+        limited = slew_limit(raw, self.servo_last, self.servo_max_step)
+        self.servo_last = limited
+        return limited
 
     def get_button_value(self, button_name, haystack = None):
         if haystack == None:
