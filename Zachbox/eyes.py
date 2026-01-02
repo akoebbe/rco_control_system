@@ -5,14 +5,7 @@ import array
 class Eyes:
     eye_count = 2
     leds_per_eye = 7
-    left_buffer = [(0, 0, 0, 0)]*leds_per_eye
-    right_buffer = [(0, 0, 0, 0)]*leds_per_eye
     black = (0, 0, 0, 0)
-    current_frame = 0
-    current_color_idx = 0
-    has_update = False
-    # Should make the queue a tuple (frame[], timing)
-    animation_queue = []
 
 
     #   _____
@@ -38,6 +31,12 @@ class Eyes:
 
     def __init__(self, color: tuple[int,int,int,int]):
         self.color = color
+        self.current_frame = 0
+        self.current_color_idx = 0
+        self.has_update = False
+        self.animation_queue = []
+        self.left_buffer = [self.black] * self.leds_per_eye
+        self.right_buffer = [self.black] * self.leds_per_eye
         self.fill()
 
     def fill(self):

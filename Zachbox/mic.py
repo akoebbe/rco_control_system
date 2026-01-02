@@ -58,18 +58,16 @@ output_max = 150
 
 class PDM2040:
     
-    range_min = 0
-    # range_max = 4656
-    range_max = 2656
-    range_floor = 45
-
-    
     def __init__(self, i2c, address, window_size=3):
         time.sleep(1)
 
         i2c = board.STEMMA_I2C()
         self.mic = I2CDevice(i2c=i2c, device_address=address)
         self.readbuf = bytearray(2)
+        self.range_min = 0
+        # range_max = 4656
+        self.range_max = 2656
+        self.range_floor = 45
     
         self.log_lo = math.log(self.range_floor)
         self.log_hi = math.log(self.range_max)
@@ -138,11 +136,6 @@ sample_buffer = np.array([0]*sample_count, dtype=np.uint16)
 
 class ADSMicMonitor:
 
-    range_min = 0
-    # range_max = 4656
-    range_max = 2656
-    range_floor = 20
-
     def __init__(self, mic_pin, window_size=3):
         """Non-linear filter to reduce signal outliers by returning the median value
         of the recent history.  The window size determines how many samples
@@ -150,6 +143,11 @@ class ADSMicMonitor:
         window width.  This filter is useful for throwing away isolated
         outliers, especially glitches out of range.
         """
+
+        self.range_min = 0
+        # range_max = 4656
+        self.range_max = 2656
+        self.range_floor = 20
 
         adc = ADS.ADS1015(i2c=board.STEMMA_I2C(), gain=16, data_rate=3300, mode=ADS.Mode.SINGLE)
         self.channels = [

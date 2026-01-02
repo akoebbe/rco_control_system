@@ -64,7 +64,7 @@ class ConnectionEspnow(Connection):
         except Exception as e:
             LOGGER.warning("Error: %s", e)
         
-        LOGGER.debug(f"send=[{self.e.send_success} {self.e.send_failure}] read=[{self.e.read_success} {self.e.read_failure}] buf={self.e.buffer_size} phy={self.e.phy_rate}", end="")
+        LOGGER.debug(f"send=[{self.e.send_success} {self.e.send_failure}] read=[{self.e.read_success} {self.e.read_failure}] buf={self.e.buffer_size} phy={self.e.phy_rate}")
             
     def send_text(self, msg: str):
         self.send(msg.encode())

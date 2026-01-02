@@ -5,16 +5,14 @@ from logger import LOGGER
 from timeit import TimeIt
 
 class WiiController:
-    map = {}
-    
-    changed = {}
-
     increment_size = 6
     joy_range = np.array((6,56))
     servo_range = np.array((0,180/increment_size))
     last_x = 128
 
     def __init__(self, i2c) -> None:
+        self.map = {}
+        self.changed = {}
         self.wc = controller.Wii_Classic(i2c=i2c)
         self.last_values = self.wc.values
         self._init_button_map()

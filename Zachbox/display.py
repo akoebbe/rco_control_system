@@ -20,14 +20,12 @@ class ZachboxDisplay:
 
     TEXT_COLOR = 0xFFFF00
 
-    indicators = {}
-
     font = bitmap_font.load_font("fonts/Silkscreen-10.bdf")
-
-    display = board.DISPLAY
     display_grid_size = (12,5)
 
     def __init__(self) -> None:
+        self.indicators = {}
+        self.display = board.DISPLAY
         # Make the display context
         self.root = displayio.Group()
         self.display.root_group = self.root
@@ -171,7 +169,6 @@ def make_icon(paths, width, height, color=0xffffff, x=0, y=0):
     svg_group = displayio.Group()
     svg_group.append(icon)
     return svg_group
-
 
 
 

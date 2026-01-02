@@ -11,31 +11,35 @@ from ulab import numpy as np
 import microcontroller 
 
 class CylonState:
-    
-    servo_target = 90
-    servo_current = 90
-    mic_level = 0
-    mouth = [(0,0,0,0)]*8
-    color = (0,255,0,0)
-    servo_sequence = []
-    running = False
-    has_update = False
-    eyes = Eyes(color)
-    total_leds = Settings.led_count_left_eye + Settings.led_count_right_eye + (Settings.mouth_led_per_row * Settings.mouth_row_count)
-    mouth = Mouth(Settings.mouth_led_per_row, Settings.mouth_row_count, Settings.mouth_style)
-    servo_travel_secs = Settings.servo_travel_secs
-    servo_steps = Settings.servo_steps
-    servo_easing = Const.EASING_TO_INT_MAP[Settings.servo_easing]
-    _blink_auto = Settings.eye_blink_auto
-
-    _mic_mouth_range = (Settings.mic_min, Settings.mic_max)
-    _battery = MedianFilter(window_size=10)
-    _temp = MedianFilter(window_size=10)
-    _zachbox_temp = MedianFilter(window_size=10)
-    disp = ZachboxDisplay()
-    _rssi = MedianFilter()
 
     def __init__(self):
+        self.servo_target = 90
+        self.servo_current = 90
+        self.mic_level = 0
+        self.color = (0, 255, 0, 0)
+        self.servo_sequence = []
+        self.running = False
+        self.has_update = False
+
+        self.total_leds = (
+            Settings.led_count_left_eye
+            + Settings.led_count_right_eye
+            + (Settings.mouth_led_per_row * Settings.mouth_row_count)
+        )
+        self.mouth = Mouth(Settings.mouth_led_per_row, Settings.mouth_row_count, Settings.mouth_style)
+        self.eyes = Eyes(self.color)
+
+        self.servo_travel_secs = Settings.servo_travel_secs
+        self.servo_steps = Settings.servo_steps
+        self.servo_easing = Const.EASING_TO_INT_MAP[Settings.servo_easing]
+        self._blink_auto = Settings.eye_blink_auto
+
+        self._mic_mouth_range = (Settings.mic_min, Settings.mic_max)
+        self._battery = MedianFilter(window_size=10)
+        self._temp = MedianFilter(window_size=10)
+        self._zachbox_temp = MedianFilter(window_size=10)
+        self._rssi = MedianFilter()
+        self.disp = ZachboxDisplay()
         self.vs = Vspeed(init_position=90, result="int")
         self.vs.set_bounds(lower_bound=0, upper_bound=180)
         self.disp.add_status_indicator(column=0, slot=0, key="zachbox_temp", label_text="Temp", value=microcontroller.cpu.temperature)
