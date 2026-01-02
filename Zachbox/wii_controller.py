@@ -2,6 +2,7 @@ import adafruit_debouncer as debouncer
 import adafruit_wii_classic as controller
 from ulab import numpy as np
 from logger import LOGGER
+from settings import Settings
 from timeit import TimeIt
 
 class WiiController:
@@ -15,6 +16,8 @@ class WiiController:
         self.changed = {}
         self.wc = controller.Wii_Classic(i2c=i2c)
         self.last_values = self.wc.values
+        self.deadzone_center = int(np.mean(self.joy_range))
+        self.deadzone_size = Settings.controller_servo_deadzone
         self._init_button_map()
         self.timeit = TimeIt()
         # Precalculate the joystick to servo value mappings
@@ -65,9 +68,15 @@ class WiiController:
         button_map.add_callback(callback=callback, modifier_name=modifier_button)
         
 
+    def _apply_deadzone(self, raw_value: int) -> int:
+        if abs(raw_value - self.deadzone_center) <= self.deadzone_size:
+            return self.deadzone_center
+        return raw_value
+
     def joystick_servo(self):
         left_x, left_y = self.wc.joystick_l
-        return self.joy_servo_map[left_x]
+        x = self._apply_deadzone(left_x)
+        return self.joy_servo_map[x]
 
     def get_button_value(self, button_name, haystack = None):
         if haystack == None:
