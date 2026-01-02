@@ -80,6 +80,8 @@ class Settings:
     controller_mic_max_down = ("DOWN", "SELECT")
     controller_blink_auto_toggle = ("B", "SELECT")
     controller_servo_deadzone = 3  # Stick values within this distance of center are treated as center
+    controller_servo_max_step = 8  # Max degrees the servo target can change per update
+    controller_servo_deadzone = 3  # Stick values within this distance of center are treated as center
     
 
 # ---------------------------------------

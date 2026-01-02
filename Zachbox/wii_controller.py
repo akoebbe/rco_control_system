@@ -18,6 +18,8 @@ class WiiController:
         self.last_values = self.wc.values
         self.deadzone_center = int(np.mean(self.joy_range))
         self.deadzone_size = Settings.controller_servo_deadzone
+        self.servo_last = 90
+        self.servo_max_step = Settings.controller_servo_max_step
         self._init_button_map()
         self.timeit = TimeIt()
         # Precalculate the joystick to servo value mappings
@@ -76,7 +78,14 @@ class WiiController:
     def joystick_servo(self):
         left_x, left_y = self.wc.joystick_l
         x = self._apply_deadzone(left_x)
-        return self.joy_servo_map[x]
+        raw = self.joy_servo_map[x]
+        delta = raw - self.servo_last
+        if delta > self.servo_max_step:
+            raw = self.servo_last + self.servo_max_step
+        elif delta < -self.servo_max_step:
+            raw = self.servo_last - self.servo_max_step
+        self.servo_last = raw
+        return raw
 
     def get_button_value(self, button_name, haystack = None):
         if haystack == None:
