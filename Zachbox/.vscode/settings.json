@@ -5,6 +5,7 @@
         "reportMissingModuleSource": "none"
     },
     "python.analysis.extraPaths": [
+        "/home/andrew/.config/Code/User/globalStorage/padgettholdings.circuitpythonsync/stubs/circuitpython_stubs-10.0.3/board_definitions/adafruit_feather_esp32s3_reverse_tft",
         "/home/andrew/.vscode/extensions/wmerkens.vscode-circuitpython-v2-0.3.4/boards/0x239A/0x8124",
         "/home/andrew/.vscode/extensions/wmerkens.vscode-circuitpython-v2-0.3.4/stubs",
         "/home/andrew/.config/Code/User/globalStorage/joedevivo.vscode-circuitpython/bundle/20241203/adafruit-circuitpython-bundle-py-20241203/lib",
@@ -19,5 +20,6 @@
     "circuitpythonsync.cpbaseversion": "10",
     "circuitpythonsync.cpfullversion": "10.0.3",
     "circuitpythonsync.curlibtag": "20251231",
-    "circuitpythonsync.drivepath": "/run/media/andrew/ZACHBOX2"
+    "circuitpythonsync.drivepath": "/run/media/andrew/ZACHBOX2",
+    "circuitpythonsync.cpboardname": "adafruit_feather_esp32s3_reverse_tft"
 }

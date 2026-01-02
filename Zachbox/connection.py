@@ -14,5 +14,5 @@ class Connection:
     def send(self, msg: bytearray):
         raise NotImplementedError
     
-    def read():
+    def read(self):
         raise NotImplementedError

@@ -65,11 +65,11 @@ class CylonState:
         self.eyes.set_eyes(eye_leds[0:8], eye_leds[8:])
 
     def set_heartbeat_from_message(self, message: bytearray):
-        battery, temp = struct.unpack('ff', message.msg)
+        battery, temp = struct.unpack('ff', message)
         
         self.battery = battery
         self.temp = temp
-        self.rssi = message.rssi
+        # self.rssi = message.rssi
         
     def build_message(self):
         LOGGER.debug("Sending message: m-%s s-%s",  self.mic_level, self.servo_current)
