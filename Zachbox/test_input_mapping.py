@@ -1,5 +1,5 @@
 import unittest
-from input_mapping import apply_deadzone, map_servo_value, slew_limit
+from input_mapping import apply_deadzone, map_servo_value, map_range, slew_limit
 
 
 class InputMappingTests(unittest.TestCase):
@@ -23,6 +23,11 @@ class InputMappingTests(unittest.TestCase):
         self.assertEqual(slew_limit(target=100, last=90, max_step=5), 95)
         self.assertEqual(slew_limit(target=80, last=90, max_step=5), 85)
         self.assertEqual(slew_limit(target=93, last=90, max_step=5), 93)
+
+    def test_map_range(self):
+        self.assertAlmostEqual(map_range(5, (0, 10), (-1, 1)), 0.0)
+        self.assertAlmostEqual(map_range(0, (0, 10), (-1, 1)), -1.0)
+        self.assertAlmostEqual(map_range(10, (0, 10), (-1, 1)), 1.0)
 
 
 if __name__ == "__main__":

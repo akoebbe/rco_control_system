@@ -19,3 +19,4 @@ timeit.py
 wii_controller.py
 settings.py
 input_mapping.py
+eye_gaze.py

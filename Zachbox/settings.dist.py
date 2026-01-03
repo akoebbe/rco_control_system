@@ -1,5 +1,6 @@
 from constants import Const
 import mouth_styles
+import adafruit_logging as logging
 
 class Settings:
     
@@ -80,7 +81,28 @@ class Settings:
     controller_mic_max_down = ("DOWN", "SELECT")
     controller_blink_auto_toggle = ("B", "SELECT")
     controller_servo_deadzone = 3  # Stick values within this distance of center are treated as center
-    controller_servo_max_step = 8  # Max degrees the servo target can change per update
+    controller_servo_max_step = 20  # Max degrees the servo target can change per update
+    controller_gaze_deadzone = 3  # Deadzone radius for right stick gaze input
+    controller_joy_min = 2  # Raw joystick min (calibrate to your controller)
+    controller_joy_max = 28  # Raw joystick max (calibrate to your controller)
+
+    # ---------------------------------------
+    # Logging
+    # ---------------------------------------
+    log_level = logging.INFO
+
+    # ---------------------------------------
+    # Debug
+    # ---------------------------------------
+    eye_debug_colors_on_boot = False
+
+    # ---------------------------------------
+    # Eye Gaze Tuning
+    # ---------------------------------------
+    eye_gaze_center_deadzone = 0.1
+    eye_gaze_pupil_radius = 1
+    eye_gaze_pupil_range = 1.4
+    eye_gaze_pupil_edge_softness = 0.2
     controller_servo_deadzone = 3  # Stick values within this distance of center are treated as center
     
 

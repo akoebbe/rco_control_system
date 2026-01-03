@@ -1,15 +1,13 @@
 import adafruit_debouncer as debouncer
 import adafruit_wii_classic as controller
-from ulab import numpy as np
 from logger import LOGGER
 from settings import Settings
 from timeit import TimeIt
-from input_mapping import apply_deadzone, map_servo_value, slew_limit
+from input_mapping import apply_deadzone, map_range, map_servo_value, slew_limit
 
 class WiiController:
     increment_size = 6
-    joy_range = np.array((6,56))
-    servo_range = np.array((0,180/increment_size))
+    servo_range = (0, 180 / increment_size)
     last_x = 128
 
     def __init__(self, i2c) -> None:
@@ -17,8 +15,10 @@ class WiiController:
         self.changed = {}
         self.wc = controller.Wii_Classic(i2c=i2c)
         self.last_values = self.wc.values
-        self.deadzone_center = int(np.mean(self.joy_range))
+        self.joy_range = (Settings.controller_joy_min, Settings.controller_joy_max)
+        self.deadzone_center = int((self.joy_range[0] + self.joy_range[1]) / 2)
         self.deadzone_size = Settings.controller_servo_deadzone
+        self.gaze_deadzone_size = Settings.controller_gaze_deadzone
         self.servo_last = 90
         self.servo_max_step = Settings.controller_servo_max_step
         self._init_button_map()
@@ -76,6 +76,18 @@ class WiiController:
         limited = slew_limit(raw, self.servo_last, self.servo_max_step)
         self.servo_last = limited
         return limited
+
+    def joystick_gaze(self) -> tuple[float, float]:
+        """
+        Map right stick to a normalized gaze vector (-1..1, -1..1) with deadzone.
+        """
+        right_x, right_y = self.wc.joystick_r
+        cx = apply_deadzone(right_x, self.deadzone_center, self.gaze_deadzone_size)
+        cy = apply_deadzone(right_y, self.deadzone_center, self.gaze_deadzone_size)
+        gx = map_range(cx, self.joy_range, (-1.0, 1.0))
+        gy = map_range(cy, self.joy_range, (-1.0, 1.0))
+        LOGGER.debug("Right stick mapped gaze: (%s, %s) (%0.2f, %0.2f)", right_x, right_y, gx, gy)
+        return (gx, gy)
 
     def get_button_value(self, button_name, haystack = None):
         if haystack == None:

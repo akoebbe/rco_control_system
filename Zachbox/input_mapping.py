@@ -23,6 +23,11 @@ def map_servo_value(raw_value: int, in_range, out_range, increment_size: int) ->
     return round(_interp_scalar(raw_value, in_range, out_range) * increment_size)
 
 
+def map_range(raw_value: int | float, in_range, out_range) -> float:
+    """Map a scalar from one range to another, clamped to input bounds."""
+    return _interp_scalar(raw_value, in_range, out_range)
+
+
 def slew_limit(target: int, last: int, max_step: int) -> int:
     """Clamp how much the target can change from the last value."""
     delta = target - last

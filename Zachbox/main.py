@@ -14,7 +14,7 @@ from wii_controller import WiiController
 import time
 import random
 
-LOGGER.setLevel(logging.INFO)
+LOGGER.setLevel(Settings.log_level)
 
 state = CylonState()
 
@@ -61,6 +61,7 @@ async def button_watcher():
 
     LOGGER.info(wc)
     last_servo_position = 128
+    last_gaze = (0.0, 0.0)
 
     while True:
         try:
@@ -70,6 +71,12 @@ async def button_watcher():
             if position != last_servo_position:
                 state.set_servo(position)
                 last_servo_position = position
+                send_update()
+
+            gaze = wc.joystick_gaze()
+            if abs(gaze[0] - last_gaze[0]) > 0.05 or abs(gaze[1] - last_gaze[1]) > 0.05:
+                state.eyes.set_gaze(gaze)
+                last_gaze = gaze
                 send_update()
             
         except OSError as e:
@@ -114,6 +121,11 @@ def send_update():
     # udp_message = bytes(f"{mic_value},{position}", 'utf-8')
     #LOGGER.debug("Sending to %s:%s message: %s", HOST, PORT, message)
     connection.send(message)  # send packet
+
+
+if Settings.eye_debug_colors_on_boot:
+    state.eyes.set_debug_colors()
+    send_update()
 
 
 async def main():
